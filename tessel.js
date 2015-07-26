@@ -2,7 +2,8 @@ var ws = require("nodejs-websocket");
 var tessel = require('tessel');
 var climatelib = require('climate-si7020');
 var climate;
-var ipAddress = "192.168.0.8";
+//var ipAddress = "192.168.0.8";
+var ipAddress = "remote-tessel.herokuapp.com";
 var port = "8081";
 var nickname = "tessel";
 
