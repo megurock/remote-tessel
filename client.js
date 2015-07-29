@@ -2,8 +2,7 @@ var ws = require("nodejs-websocket");
 var tessel = require('tessel');
 var climatelib = require('climate-si7020');
 var climate;
-//var ipAddress = "192.168.0.8";
-var ipAddress = "remote-tessel.herokuapp.com";
+var ipAddress = "192.168.0.5";
 var port = "8081";
 var nickname = "tessel";
 
@@ -12,11 +11,9 @@ var nickname = "tessel";
  */
 function connectWebSocket() {
 
-	console.log("connect web socket.")
 	// Set the binary fragmentation to 1 byte so it instantly sends anything we write to it
 	ws.setBinaryFragmentation(1);
 
-	// When we get a connection
 	var connection = ws.connect('ws://' + ipAddress + ':' + port, function() {
 		console.log("Socket connected.");
 		connection.sendText(nickname);
@@ -27,12 +24,12 @@ function connectWebSocket() {
 			}
 
 			switch(true) {
-				case (command.indexOf('temp') !== -1):
+				case (command.indexOf('温度は？') !== -1):
 					readTemperature(function(message) {
 						connection.sendText(message);
 					});
 					break;
-				case (command.indexOf('humid') !== -1):
+				case (command.indexOf('湿度は？') !== -1):
 					readHumidity(function(message) {
 						connection.sendText(message);
 					});
@@ -44,41 +41,30 @@ function connectWebSocket() {
 	});
 }
 
-
-/**
- *
- */
 function readTemperature(callback) {
 	climate.readTemperature('c', function(err, temp) {
 		var message;
 		if (err) {
 			message = err.message;
 		} else {
-			message = "temperature: " + temp.toFixed(2) + ' degree';
+			message = "現在のお部屋の温度は" + temp.toFixed(2) + "℃です。";
 		}
 		callback(message);
 	});
 }
 
-/**
- *
- */
 function readHumidity(callback) {
 	climate.readHumidity(function(err, humid) {
 		var message;
 		if (err) {
 			message = err.message;
 		} else {
-			message = "humid: " + humid.toFixed(2);
+			message = "現在のお部屋の湿度は" + humid.toFixed(2) + "%RHです。";
 		}
 		callback(message);
 	});
 }
 
-
-/**
- *
- */
 function init() {
 	climate = climatelib.use(tessel.port['A']);
 	climate.on('ready', function () {

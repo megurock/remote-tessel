@@ -17,14 +17,6 @@ var server = ws.createServer(function (connection) {
 			broadcast("["+connection.nickname+"] "+str);
 	});
 
-	/*connection.on('binary', function(stream) {
-		stream.on('data', function(data) {
-			var str = data.toString();
-			console.log('Got data:', str);
-			broadcast("[Tessel] " + str);
-		});
-	});*/
-
 	connection.on("close", function () {
 		broadcast(connection.nickname+" left");
 	})
